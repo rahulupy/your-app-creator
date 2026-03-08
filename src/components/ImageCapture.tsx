@@ -83,12 +83,20 @@ export default function ImageCapture({ onImageCaptured, instructions, disabled }
 
   const capturePhoto = () => {
     if (!videoRef.current) return;
+    const vw = videoRef.current.videoWidth;
+    const vh = videoRef.current.videoHeight;
+
+    // Crop to a centered square (the eye guide area)
+    const cropSize = Math.min(vw, vh) * 0.55;
+    const cx = (vw - cropSize) / 2;
+    const cy = (vh - cropSize) / 2;
+
     const canvas = document.createElement("canvas");
-    canvas.width = videoRef.current.videoWidth;
-    canvas.height = videoRef.current.videoHeight;
+    canvas.width = cropSize;
+    canvas.height = cropSize;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    ctx.drawImage(videoRef.current, 0, 0);
+    ctx.drawImage(videoRef.current, cx, cy, cropSize, cropSize, 0, 0, cropSize, cropSize);
     canvas.toBlob((blob) => {
       if (blob) {
         const file = new File([blob], "eye-capture.jpg", { type: "image/jpeg" });
