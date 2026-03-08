@@ -91,10 +91,10 @@
 
     --sidebar-background: 210 16% 9%;
     --sidebar-foreground: 210 10% 82%;
-    --sidebar-primary: 168 50% 44%;
+    --sidebar-primary: 205 65% 52%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 14% 15%;
-    --sidebar-accent-foreground: 168 40% 65%;
+    --sidebar-accent: 205 30% 16%;
+    --sidebar-accent-foreground: 205 45% 65%;
     --sidebar-border: 210 12% 16%;
     --sidebar-ring: 168 50% 44%;
   }
