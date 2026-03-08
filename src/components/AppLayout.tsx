@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Home, Eye, Shield, Phone, UserCircle } from "lucide-react";
+import mediscanLogo from "@/assets/mediscan-logo.png";
 
 const navItems = [
   { path: "/", icon: Home, label: "Home" },
@@ -33,9 +34,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-50 bg-card border-b shadow-sm">
         <div className="container flex h-14 items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-              <Eye className="h-4 w-4 text-primary-foreground" />
-            </div>
+            <img src={mediscanLogo} alt="MediScan Logo" className="h-9 w-9 object-contain" />
             <div className="leading-none">
               <span className="font-display text-base font-bold text-foreground">
                 MediScan
@@ -80,9 +79,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           <div className="grid gap-6 sm:grid-cols-3">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <div className="h-6 w-6 rounded bg-primary flex items-center justify-center">
-                  <Eye className="h-3 w-3 text-primary-foreground" />
-                </div>
+                <img src={mediscanLogo} alt="MediScan" className="h-6 w-6 object-contain" />
                 <span className="font-display text-sm font-bold text-foreground">MediScan</span>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
