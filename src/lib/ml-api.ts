@@ -53,7 +53,8 @@ export function getSeverityDescription(
 }
 
 export async function detectCataract(
-  imageFile: File
+  imageFile: File,
+  patientInfo?: { name: string; age: number; gender: string; eyeSide?: string }
 ): Promise<PredictionResult> {
   if (!ML_API_BASE_URL) {
     // Demo mode — simulate a result
@@ -73,6 +74,14 @@ export async function detectCataract(
 
   const formData = new FormData();
   formData.append("image", imageFile);
+  if (patientInfo) {
+    formData.append("name", patientInfo.name);
+    formData.append("age", String(patientInfo.age));
+    formData.append("gender", patientInfo.gender);
+    if (patientInfo.eyeSide) formData.append("eye", patientInfo.eyeSide);
+  }
+  const username = sessionStorage.getItem("mediscan_user") || "";
+  if (username) formData.append("username", username);
 
   const response = await fetch(`${ML_API_BASE_URL}/predict`, {
     method: "POST",
@@ -87,7 +96,8 @@ export async function detectCataract(
   }
 
    const data = await response.json();
-   let condition = data.prediction === "cataract" ? "cataract" : "normal";
+   const rawPrediction = (data.prediction || "").toLowerCase();
+   let condition = rawPrediction.includes("cataract") ? "cataract" : "normal";
    let confidence = typeof data.confidence === "number" ? data.confidence : parseFloat(data.confidence) || 0;
    // API returns percentage (e.g. 86.24), normalize to 0-1
    if (confidence > 1) confidence = confidence / 100;
