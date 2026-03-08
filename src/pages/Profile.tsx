@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { getScans, getStats } from "@/lib/scan-history";
-import { User, Calendar, BarChart3, Eye, Clock, ShieldAlert, CheckCircle, LogOut, ArrowLeft, Activity } from "lucide-react";
+import { fetchScans, getStatsFromScans, ScanRecord } from "@/lib/scan-history";
+import { User, Calendar, BarChart3, Eye, Clock, ShieldAlert, CheckCircle, LogOut, ArrowLeft, Activity, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
