@@ -17,6 +17,7 @@ export default function CataractDetection() {
     setResult(null);
     try {
       const prediction = await detectCataract(file);
+      saveScan(file.name, file, prediction);
       setResult(prediction);
     } catch {
       toast({

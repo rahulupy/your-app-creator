@@ -33,6 +33,7 @@ const AppRoutes = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/cataract" element={<CataractDetection />} />
+              <Route path="/profile" element={<Profile />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AppLayout>

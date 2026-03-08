@@ -1,10 +1,11 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Eye, Shield, Phone } from "lucide-react";
+import { Home, Eye, Shield, Phone, UserCircle } from "lucide-react";
 
 const navItems = [
   { path: "/", icon: Home, label: "Home" },
   { path: "/cataract", icon: Eye, label: "Eye Scan" },
+  { path: "/profile", icon: UserCircle, label: "Profile" },
 ];
 
 export default function AppLayout({ children }: { children: ReactNode }) {
