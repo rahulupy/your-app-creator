@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Home, Eye, Shield, Phone, UserCircle } from "lucide-react";
+import mediscanLogo from "@/assets/mediscan-logo.png";
 
 const navItems = [
   { path: "/", icon: Home, label: "Home" },
