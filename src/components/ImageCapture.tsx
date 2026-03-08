@@ -83,14 +83,6 @@ export default function ImageCapture({ onImageCaptured, instructions, disabled }
         </AnimatePresence>
 
         <input
-          ref={cameraInputRef}
-          type="file"
-          accept="image/*"
-          capture="environment"
-          className="hidden"
-          onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
-        />
-        <input
           ref={fileInputRef}
           type="file"
           accept="image/*"
