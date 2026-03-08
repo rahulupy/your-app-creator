@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import ImageCapture from "@/components/ImageCapture";
 import ResultCard from "@/components/ResultCard";
 import { detectCataract, PredictionResult } from "@/lib/ml-api";
+import { saveScan } from "@/lib/scan-history";
 import { useToast } from "@/hooks/use-toast";
 
 export default function CataractDetection() {
