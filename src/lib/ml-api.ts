@@ -89,6 +89,8 @@ export async function detectCataract(
    const data = await response.json();
    let condition = data.prediction === "cataract" ? "cataract" : "normal";
    let confidence = typeof data.confidence === "number" ? data.confidence : parseFloat(data.confidence) || 0;
+   // API returns percentage (e.g. 86.24), normalize to 0-1
+   if (confidence > 1) confidence = confidence / 100;
    
    // If confidence < 45%, flip the prediction and invert confidence
    if (confidence < 0.45) {
@@ -141,6 +143,8 @@ export async function detectAnemia(
    const data = await response.json();
    let condition = data.prediction === "anemia" ? "anemia" : "normal";
    let confidence = typeof data.confidence === "number" ? data.confidence : parseFloat(data.confidence) || 0;
+   // API returns percentage (e.g. 86.24), normalize to 0-1
+   if (confidence > 1) confidence = confidence / 100;
    
    // If confidence < 45%, flip the prediction and invert confidence
    if (confidence < 0.45) {
