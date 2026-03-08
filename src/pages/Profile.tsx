@@ -115,7 +115,12 @@ export default function Profile() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {scans.length === 0 ? (
+            {loadingScans ? (
+              <div className="flex items-center justify-center py-8 gap-2">
+                <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                <p className="text-sm text-muted-foreground">Loading history…</p>
+              </div>
+            ) : scans.length === 0 ? (
               <div className="text-center py-8">
                 <Eye className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" />
                 <p className="text-sm text-muted-foreground">No scans yet</p>
