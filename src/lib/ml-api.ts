@@ -121,6 +121,9 @@ export async function detectAnemia(
 
   const response = await fetch(`${ML_API_BASE_URL}/predict`, {
     method: "POST",
+    headers: {
+      "ngrok-skip-browser-warning": "true",
+    },
     body: formData,
   });
 
