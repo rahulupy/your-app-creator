@@ -1,7 +1,7 @@
 import { useRef, useState, useCallback } from "react";
 import { Upload, X, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface ImageCaptureProps {
   onImageCaptured: (file: File) => void;
@@ -14,15 +14,12 @@ export default function ImageCapture({ onImageCaptured, instructions, disabled }
   const [capturedFile, setCapturedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFile = useCallback(
-    (file: File) => {
-      setCapturedFile(file);
-      const reader = new FileReader();
-      reader.onload = (e) => setPreview(e.target?.result as string);
-      reader.readAsDataURL(file);
-    },
-    []
-  );
+  const handleFile = useCallback((file: File) => {
+    setCapturedFile(file);
+    const reader = new FileReader();
+    reader.onload = (e) => setPreview(e.target?.result as string);
+    reader.readAsDataURL(file);
+  }, []);
 
   const handleSubmit = () => {
     if (capturedFile) onImageCaptured(capturedFile);
@@ -35,70 +32,66 @@ export default function ImageCapture({ onImageCaptured, instructions, disabled }
 
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border-2 border-dashed border-border bg-muted/30 p-6 text-center">
-        <p className="text-sm text-muted-foreground mb-4">{instructions}</p>
-
-        <AnimatePresence mode="wait">
-          {preview ? (
-            <motion.div
-              key="preview"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="relative mx-auto max-w-xs"
-            >
+      <AnimatePresence mode="wait">
+        {preview ? (
+          <motion.div
+            key="preview"
+            initial={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.97 }}
+            className="relative"
+          >
+            <div className="overflow-hidden rounded-xl border bg-card">
               <img
                 src={preview}
-                alt="Captured"
-                className="w-full rounded-lg shadow-lg"
+                alt="Captured eye"
+                className="w-full aspect-[4/3] object-cover"
               />
-              <Button
-                variant="destructive"
-                size="icon"
-                className="absolute -top-2 -right-2 h-8 w-8 rounded-full"
-                onClick={reset}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="buttons"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="flex flex-col sm:flex-row gap-3 justify-center"
+            </div>
+            <button
+              onClick={reset}
+              className="absolute top-3 right-3 h-7 w-7 rounded-full bg-foreground/70 text-background flex items-center justify-center hover:bg-foreground/90 transition-colors"
             >
-              <Button
-                variant="outline"
-                className="gap-2"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={disabled}
-              >
-                <Upload className="h-4 w-4" />
-                Upload Image
-              </Button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </motion.div>
+        ) : (
+          <motion.button
+            key="upload"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => fileInputRef.current?.click()}
+            disabled={disabled}
+            className="w-full rounded-xl border-2 border-dashed border-border hover:border-primary/40 bg-muted/30 hover:bg-accent/30 transition-colors py-16 flex flex-col items-center gap-3 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed group"
+          >
+            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/15 transition-colors">
+              <Upload className="h-4 w-4 text-primary" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-foreground">Upload image</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{instructions}</p>
+            </div>
+          </motion.button>
+        )}
+      </AnimatePresence>
 
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
-        />
-      </div>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
+      />
 
       {preview && (
-        <div className="flex gap-3 justify-center">
-          <Button variant="outline" onClick={reset} className="gap-2" disabled={disabled}>
-            <RotateCcw className="h-4 w-4" />
+        <div className="flex gap-3">
+          <Button variant="outline" onClick={reset} className="flex-1 gap-2 rounded-full" disabled={disabled}>
+            <RotateCcw className="h-3.5 w-3.5" />
             Retake
           </Button>
-          <Button onClick={handleSubmit} className="gap-2" disabled={disabled}>
-            Analyze Image
+          <Button onClick={handleSubmit} className="flex-1 gap-2 rounded-full" disabled={disabled}>
+            Analyze
           </Button>
         </div>
       )}
