@@ -54,16 +54,16 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       </header>
 
       {/* Main */}
-      <main className="flex-1">
-        <motion.div
-          key={location.pathname}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          {children}
-        </motion.div>
-      </main>
+       <main className="flex-1 pb-20 md:pb-0">
+         <motion.div
+           key={location.pathname}
+           initial={{ opacity: 0, y: 12 }}
+           animate={{ opacity: 1, y: 0 }}
+           transition={{ duration: 0.3 }}
+         >
+           {children}
+         </motion.div>
+       </main>
 
       {/* Disclaimer */}
       <footer className="border-t bg-card/50">
