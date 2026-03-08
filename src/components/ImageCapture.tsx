@@ -165,6 +165,32 @@ export default function ImageCapture({ onImageCaptured, instructions, disabled }
               muted
               className="w-full aspect-[4/3] object-cover"
             />
+            {/* Eye guide overlay */}
+            <div className="absolute inset-0 pointer-events-none">
+              {/* Dark overlay with cutout */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div
+                  className="relative w-full h-full"
+                  style={{
+                    background: "radial-gradient(circle 28% at 50% 45%, transparent 98%, rgba(0,0,0,0.55) 100%)",
+                  }}
+                />
+              </div>
+              {/* Eye circle guide */}
+              <div className="absolute inset-0 flex items-center justify-center" style={{ paddingBottom: "10%" }}>
+                <div
+                  className="rounded-full border-2 border-dashed border-primary/80"
+                  style={{ width: "55%", aspectRatio: "1" }}
+                />
+              </div>
+              {/* Label */}
+              <div className="absolute top-3 left-0 right-0 flex justify-center">
+                <span className="bg-foreground/60 text-background text-[10px] font-medium px-2.5 py-1 rounded-full backdrop-blur-sm">
+                  Position eye inside the circle
+                </span>
+              </div>
+            </div>
+
             <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-3">
               <Button
                 variant="outline"
@@ -184,9 +210,6 @@ export default function ImageCapture({ onImageCaptured, instructions, disabled }
               </Button>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground text-center">
-            Position the eye in frame and tap Capture
-          </p>
         </div>
       )}
 
