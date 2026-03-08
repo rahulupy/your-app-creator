@@ -138,14 +138,21 @@ export async function detectAnemia(
     throw new Error(`API Error: ${response.status}`);
   }
 
-  const data = await response.json();
-  const condition = data.prediction === "anemia" ? "anemia" : "normal";
-  const confidence = typeof data.confidence === "number" ? data.confidence : parseFloat(data.confidence) || 0;
-  const severity = confidence > 0.85 ? "severe" : confidence > 0.7 ? "moderate" : "mild";
-  return {
-    condition: condition as PredictionResult["condition"],
-    confidence,
-    severity: condition === "anemia" ? (severity as PredictionResult["severity"]) : undefined,
-    description: getSeverityDescription(condition, confidence, condition === "anemia" ? severity : undefined),
-  };
+   const data = await response.json();
+   let condition = data.prediction === "anemia" ? "anemia" : "normal";
+   let confidence = typeof data.confidence === "number" ? data.confidence : parseFloat(data.confidence) || 0;
+   
+   // If confidence < 45%, flip the prediction and invert confidence
+   if (confidence < 0.45) {
+     condition = condition === "anemia" ? "normal" : "anemia";
+     confidence = 1 - confidence;
+   }
+   
+   const severity = confidence > 0.85 ? "severe" : confidence > 0.7 ? "moderate" : "mild";
+   return {
+     condition: condition as PredictionResult["condition"],
+     confidence,
+     severity: condition === "anemia" ? (severity as PredictionResult["severity"]) : undefined,
+     description: getSeverityDescription(condition, confidence, condition === "anemia" ? severity : undefined),
+   };
 }
