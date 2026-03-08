@@ -117,8 +117,10 @@ export default function Profile() {
             ) : (
               <div className="space-y-0">
                 {/* Table header */}
-                <div className="grid grid-cols-[1fr,1fr,80px,100px] gap-2 px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b">
-                  <span>Image</span>
+                <div className="grid grid-cols-[1fr,80px,60px,70px,80px,90px] gap-2 px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b">
+                  <span>Patient</span>
+                  <span>Age</span>
+                  <span>Sex</span>
                   <span>Result</span>
                   <span>Score</span>
                   <span>Date</span>
@@ -129,22 +131,29 @@ export default function Profile() {
                   return (
                     <div
                       key={scan.id}
-                      className="grid grid-cols-[1fr,1fr,80px,100px] gap-2 px-3 py-3 items-center border-b last:border-0 hover:bg-muted/30 transition-colors"
+                      className="grid grid-cols-[1fr,80px,60px,70px,80px,90px] gap-2 px-3 py-3 items-center border-b last:border-0 hover:bg-muted/30 transition-colors"
                     >
-                      <span className="text-sm text-foreground truncate">{scan.imageName}</span>
-                      <span className="flex items-center gap-1.5 text-sm">
+                      <div className="truncate">
+                        <span className="text-sm text-foreground">{scan.patient?.name || "—"}</span>
+                        {scan.patient?.eyeSide && (
+                          <span className="text-[10px] text-muted-foreground ml-1 capitalize">({scan.patient.eyeSide})</span>
+                        )}
+                      </div>
+                      <span className="text-sm text-muted-foreground">{scan.patient?.age || "—"}</span>
+                      <span className="text-sm text-muted-foreground capitalize">{scan.patient?.gender?.charAt(0).toUpperCase() || "—"}</span>
+                      <span className="flex items-center gap-1 text-xs">
                         {isNormal ? (
-                          <CheckCircle className="h-3.5 w-3.5 text-success shrink-0" />
+                          <CheckCircle className="h-3 w-3 text-success shrink-0" />
                         ) : (
-                          <ShieldAlert className="h-3.5 w-3.5 text-warning shrink-0" />
+                          <ShieldAlert className="h-3 w-3 text-warning shrink-0" />
                         )}
                         <span className={isNormal ? "text-success" : "text-warning"}>
-                          {isNormal ? "Normal" : "Cataract"}
+                          {isNormal ? "OK" : "Cat."}
                         </span>
                       </span>
                       <span className="text-sm font-medium text-foreground tabular-nums">{confidence}%</span>
                       <span className="text-xs text-muted-foreground">
-                        {new Date(scan.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                        {new Date(scan.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                       </span>
                     </div>
                   );
