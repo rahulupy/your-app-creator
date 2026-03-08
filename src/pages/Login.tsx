@@ -95,6 +95,11 @@ export default function Login() {
           </Button>
         </form>
 
+        <p className="text-sm text-center text-muted-foreground">
+          Don't have an account?{" "}
+          <Link to="/signup" className="text-primary hover:underline font-medium">Sign up</Link>
+        </p>
+
         <p className="text-[11px] text-center text-muted-foreground">
           For educational purposes only. Not a substitute for professional medical advice.
         </p>
