@@ -56,7 +56,7 @@ export default function CataractDetection() {
     setLoading(true);
     try {
       const prediction = await detectCataract(pendingFile);
-      saveScan(pendingFile.name, pendingFile, patient, prediction);
+      await saveScan(pendingFile.name, pendingFile, patient, prediction);
       setResult(prediction);
     } catch {
       toast({
