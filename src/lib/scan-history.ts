@@ -121,7 +121,7 @@ export async function fetchScans(): Promise<ScanRecord[]> {
           eyeSide: item.eye || item.eye_side || undefined,
         },
         prediction: {
-          condition,
+           condition: condition as PredictionResult["condition"],
           confidence,
           severity: condition === "cataract" ? severity : undefined,
           description: item.description || "",
