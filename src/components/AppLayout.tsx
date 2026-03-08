@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Eye, Heart, Activity, AlertTriangle } from "lucide-react";
+import { Home, Eye, Activity, AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
 
 const navItems = [
