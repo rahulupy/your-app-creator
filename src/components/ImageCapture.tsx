@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback } from "react";
-import { Camera, Upload, X, RotateCcw } from "lucide-react";
+import { Upload, X, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -13,7 +13,6 @@ export default function ImageCapture({ onImageCaptured, instructions, disabled }
   const [preview, setPreview] = useState<string | null>(null);
   const [capturedFile, setCapturedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = useCallback(
     (file: File) => {
@@ -73,15 +72,6 @@ export default function ImageCapture({ onImageCaptured, instructions, disabled }
               <Button
                 variant="outline"
                 className="gap-2"
-                onClick={() => cameraInputRef.current?.click()}
-                disabled={disabled}
-              >
-                <Camera className="h-4 w-4" />
-                Take Photo
-              </Button>
-              <Button
-                variant="outline"
-                className="gap-2"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={disabled}
               >
@@ -92,14 +82,6 @@ export default function ImageCapture({ onImageCaptured, instructions, disabled }
           )}
         </AnimatePresence>
 
-        <input
-          ref={cameraInputRef}
-          type="file"
-          accept="image/*"
-          capture="environment"
-          className="hidden"
-          onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
-        />
         <input
           ref={fileInputRef}
           type="file"
