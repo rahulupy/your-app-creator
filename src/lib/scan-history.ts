@@ -95,48 +95,40 @@ export async function fetchScans(): Promise<ScanRecord[]> {
 
     const data = await response.json();
 
-    // Map backend response to ScanRecord format
-    if (Array.isArray(data)) {
-      return data.map((item: any) => ({
+    const mapItem = (item: any): ScanRecord => {
+      let confidence = item.confidence || 0;
+      if (confidence > 1) confidence = confidence / 100;
+
+      const rawPrediction = (item.prediction || "").toLowerCase();
+      const condition = rawPrediction.includes("cataract") ? "cataract" : "normal";
+      const severity = confidence > 0.85 ? "severe" : confidence > 0.7 ? "moderate" : "mild";
+
+      return {
         id: item.id || crypto.randomUUID(),
         imageUrl: "",
         imageName: item.image_name || "",
         patient: {
-          name: item.patient_name || "Unknown",
-          age: item.patient_age || 0,
-          gender: item.patient_gender || "other",
-          eyeSide: item.eye_side || undefined,
+          name: item.name || item.patient_name || "Unknown",
+          age: item.age || item.patient_age || 0,
+          gender: item.gender || item.patient_gender || "other",
+          eyeSide: item.eye || item.eye_side || undefined,
         },
         prediction: {
-          condition: item.prediction || "normal",
-          confidence: item.confidence || 0,
-          severity: item.severity || undefined,
+          condition,
+          confidence,
+          severity: condition === "cataract" ? severity : undefined,
           description: item.description || "",
         },
         date: item.date || new Date().toISOString(),
-      }));
+      };
+    };
+
+    if (Array.isArray(data)) {
+      return data.map(mapItem);
     }
 
-    // If response has a nested array (e.g. { history: [...] })
     const arr = data.history || data.scans || data.records || [];
-    return arr.map((item: any) => ({
-      id: item.id || crypto.randomUUID(),
-      imageUrl: "",
-      imageName: item.image_name || "",
-      patient: {
-        name: item.patient_name || "Unknown",
-        age: item.patient_age || 0,
-        gender: item.patient_gender || "other",
-        eyeSide: item.eye_side || undefined,
-      },
-      prediction: {
-        condition: item.prediction || "normal",
-        confidence: item.confidence || 0,
-        severity: item.severity || undefined,
-        description: item.description || "",
-      },
-      date: item.date || new Date().toISOString(),
-    }));
+    return arr.map(mapItem);
   } catch (err) {
     console.error("Failed to fetch scan history:", err);
     return [];
