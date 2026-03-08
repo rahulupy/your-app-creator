@@ -34,9 +34,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-50 bg-card border-b shadow-sm">
         <div className="container flex h-14 items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-              <Eye className="h-4 w-4 text-primary-foreground" />
-            </div>
+            <img src={mediscanLogo} alt="MediScan Logo" className="h-9 w-9 object-contain" />
             <div className="leading-none">
               <span className="font-display text-base font-bold text-foreground">
                 MediScan
