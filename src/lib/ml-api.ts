@@ -87,7 +87,8 @@ export async function detectCataract(
   }
 
    const data = await response.json();
-   let condition = data.prediction === "cataract" ? "cataract" : "normal";
+   const rawPrediction = (data.prediction || "").toLowerCase();
+   let condition = rawPrediction.includes("cataract") ? "cataract" : "normal";
    let confidence = typeof data.confidence === "number" ? data.confidence : parseFloat(data.confidence) || 0;
    // API returns percentage (e.g. 86.24), normalize to 0-1
    if (confidence > 1) confidence = confidence / 100;
