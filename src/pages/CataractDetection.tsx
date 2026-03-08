@@ -4,20 +4,59 @@ import { Link } from "react-router-dom";
 import ImageCapture from "@/components/ImageCapture";
 import ResultCard from "@/components/ResultCard";
 import { detectCataract, PredictionResult } from "@/lib/ml-api";
-import { saveScan } from "@/lib/scan-history";
+import { saveScan, PatientDetails } from "@/lib/scan-history";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 export default function CataractDetection() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<PredictionResult | null>(null);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [showPatientForm, setShowPatientForm] = useState(false);
+  const [patientName, setPatientName] = useState("");
+  const [patientAge, setPatientAge] = useState("");
+  const [patientGender, setPatientGender] = useState<string>("");
+  const [eyeSide, setEyeSide] = useState<string>("");
   const { toast } = useToast();
 
-  const handleAnalyze = async (file: File) => {
-    setLoading(true);
+  const handleImageCaptured = (file: File) => {
+    setPendingFile(file);
+    setShowPatientForm(true);
     setResult(null);
+  };
+
+  const handlePatientSubmit = async () => {
+    if (!pendingFile || !patientName.trim() || !patientAge || !patientGender) return;
+
+    const patient: PatientDetails = {
+      name: patientName.trim(),
+      age: parseInt(patientAge),
+      gender: patientGender as PatientDetails["gender"],
+      eyeSide: eyeSide ? (eyeSide as PatientDetails["eyeSide"]) : undefined,
+    };
+
+    setShowPatientForm(false);
+    setLoading(true);
     try {
-      const prediction = await detectCataract(file);
-      saveScan(file.name, file, prediction);
+      const prediction = await detectCataract(pendingFile);
+      saveScan(pendingFile.name, pendingFile, patient, prediction);
       setResult(prediction);
     } catch {
       toast({
@@ -29,6 +68,8 @@ export default function CataractDetection() {
       setLoading(false);
     }
   };
+
+  const isFormValid = patientName.trim() && patientAge && parseInt(patientAge) > 0 && patientGender;
 
   return (
     <div>
@@ -46,6 +87,77 @@ export default function CataractDetection() {
         </div>
       </div>
 
+      {/* Patient Details Dialog */}
+      <Dialog open={showPatientForm} onOpenChange={setShowPatientForm}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Patient Details</DialogTitle>
+            <DialogDescription>
+              Enter the patient's information before proceeding with the analysis.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label htmlFor="patient-name">Full Name <span className="text-destructive">*</span></Label>
+              <Input
+                id="patient-name"
+                value={patientName}
+                onChange={(e) => setPatientName(e.target.value)}
+                placeholder="Enter patient name"
+                maxLength={100}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label htmlFor="patient-age">Age <span className="text-destructive">*</span></Label>
+                <Input
+                  id="patient-age"
+                  type="number"
+                  min={1}
+                  max={150}
+                  value={patientAge}
+                  onChange={(e) => setPatientAge(e.target.value)}
+                  placeholder="Age"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Gender <span className="text-destructive">*</span></Label>
+                <Select value={patientGender} onValueChange={setPatientGender}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="male">Male</SelectItem>
+                    <SelectItem value="female">Female</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Eye Side <span className="text-muted-foreground text-xs">(optional)</span></Label>
+              <Select value={eyeSide} onValueChange={setEyeSide}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select eye" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="left">Left Eye</SelectItem>
+                  <SelectItem value="right">Right Eye</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={() => setShowPatientForm(false)} className="flex-1">
+              Cancel
+            </Button>
+            <Button onClick={handlePatientSubmit} disabled={!isFormValid} className="flex-1">
+              Start Analysis
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <div className="container max-w-2xl py-8 pb-24 md:pb-8">
         <div className="grid gap-6 md:grid-cols-[1fr,280px]">
           {/* Main content */}
@@ -61,7 +173,7 @@ export default function CataractDetection() {
 
             <ImageCapture
               instructions="Ensure the pupil is clearly visible with even lighting"
-              onImageCaptured={handleAnalyze}
+              onImageCaptured={handleImageCaptured}
               disabled={loading}
             />
 
