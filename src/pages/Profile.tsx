@@ -115,46 +115,55 @@ export default function Profile() {
                 </Button>
               </div>
             ) : (
-              <div className="space-y-0">
-                {/* Table header */}
-                <div className="grid grid-cols-[1fr,80px,60px,70px,80px,90px] gap-2 px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b">
-                  <span>Patient</span>
-                  <span>Age</span>
-                  <span>Sex</span>
-                  <span>Result</span>
-                  <span>Score</span>
-                  <span>Date</span>
-                </div>
+              <div className="space-y-3">
                 {scans.map((scan) => {
                   const isNormal = scan.prediction.condition === "normal";
                   const confidence = Math.round(scan.prediction.confidence * 100);
                   return (
                     <div
                       key={scan.id}
-                      className="grid grid-cols-[1fr,80px,60px,70px,80px,90px] gap-2 px-3 py-3 items-center border-b last:border-0 hover:bg-muted/30 transition-colors"
+                      className="rounded-lg border bg-card p-4 hover:shadow-sm transition-shadow"
                     >
-                      <div className="truncate">
-                        <span className="text-sm text-foreground">{scan.patient?.name || "—"}</span>
-                        {scan.patient?.eyeSide && (
-                          <span className="text-[10px] text-muted-foreground ml-1 capitalize">({scan.patient.eyeSide})</span>
-                        )}
-                      </div>
-                      <span className="text-sm text-muted-foreground">{scan.patient?.age || "—"}</span>
-                      <span className="text-sm text-muted-foreground capitalize">{scan.patient?.gender?.charAt(0).toUpperCase() || "—"}</span>
-                      <span className="flex items-center gap-1 text-xs">
-                        {isNormal ? (
-                          <CheckCircle className="h-3 w-3 text-success shrink-0" />
-                        ) : (
-                          <ShieldAlert className="h-3 w-3 text-warning shrink-0" />
-                        )}
-                        <span className={isNormal ? "text-success" : "text-warning"}>
-                          {isNormal ? "OK" : "Cat."}
+                      {/* Top row: patient info + date */}
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <p className="text-sm font-semibold text-foreground">
+                            {scan.patient?.name || "Unknown Patient"}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            {scan.patient?.age ? `${scan.patient.age} yrs` : "—"}
+                            {scan.patient?.gender ? ` · ${scan.patient.gender.charAt(0).toUpperCase()}${scan.patient.gender.slice(1)}` : ""}
+                            {scan.patient?.eyeSide ? ` · ${scan.patient.eyeSide.charAt(0).toUpperCase()}${scan.patient.eyeSide.slice(1)} Eye` : ""}
+                          </p>
+                        </div>
+                        <span className="text-[11px] text-muted-foreground whitespace-nowrap">
+                          {new Date(scan.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                         </span>
-                      </span>
-                      <span className="text-sm font-medium text-foreground tabular-nums">{confidence}%</span>
-                      <span className="text-xs text-muted-foreground">
-                        {new Date(scan.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                      </span>
+                      </div>
+
+                      {/* Result row */}
+                      <div className={`flex items-center justify-between rounded-md px-3 py-2.5 ${
+                        isNormal ? "bg-success/10" : "bg-warning/10"
+                      }`}>
+                        <div className="flex items-center gap-2">
+                          {isNormal ? (
+                            <CheckCircle className="h-4 w-4 text-success shrink-0" />
+                          ) : (
+                            <ShieldAlert className="h-4 w-4 text-warning shrink-0" />
+                          )}
+                          <span className={`text-sm font-medium ${isNormal ? "text-success" : "text-warning"}`}>
+                            {isNormal ? "Normal — No Cataract Detected" : "Cataract Detected"}
+                          </span>
+                        </div>
+                        <span className="text-sm font-bold text-foreground tabular-nums">{confidence}%</span>
+                      </div>
+
+                      {/* Severity */}
+                      {scan.prediction.severity && (
+                        <p className="text-xs text-muted-foreground mt-2 capitalize">
+                          Severity: <span className="font-medium text-foreground">{scan.prediction.severity}</span>
+                        </p>
+                      )}
                     </div>
                   );
                 })}
