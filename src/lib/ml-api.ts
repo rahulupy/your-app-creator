@@ -1,7 +1,7 @@
 // ML API Integration Service
 // Configure your ML API endpoint here once deployed
 
-const ML_API_BASE_URL = import.meta.env.VITE_ML_API_URL || "";
+const ML_API_BASE_URL = import.meta.env.VITE_ML_API_URL || "https://nontutorial-sharolyn-intersocial.ngrok-free.dev";
 
 export interface PredictionResult {
   condition: "normal" | "cataract" | "anemia";
