@@ -21,7 +21,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/cataract" element={<CataractDetection />} />
-            <Route path="/anemia" element={<AnemiaDetection />} />
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AppLayout>

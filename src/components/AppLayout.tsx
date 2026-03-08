@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 const navItems = [
   { path: "/", icon: Home, label: "Home" },
   { path: "/cataract", icon: Eye, label: "Cataract" },
-  { path: "/anemia", icon: Heart, label: "Anemia" },
 ];
 
 export default function AppLayout({ children }: { children: ReactNode }) {

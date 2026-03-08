@@ -12,13 +12,6 @@ const features = [
     path: "/cataract",
     color: "bg-accent/10 text-accent",
   },
-  {
-    icon: Heart,
-    title: "Anemia Detection",
-    description: "Screen for anemia by analyzing the palpebral conjunctiva through advanced color spectrum analysis.",
-    path: "/anemia",
-    color: "bg-destructive/10 text-destructive",
-  },
 ];
 
 const highlights = [
