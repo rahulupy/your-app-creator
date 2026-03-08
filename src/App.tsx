@@ -8,6 +8,7 @@ import AppLayout from "@/components/AppLayout";
 import Index from "./pages/Index";
 import CataractDetection from "./pages/CataractDetection";
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
