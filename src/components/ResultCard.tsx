@@ -1,7 +1,7 @@
 import { PredictionResult } from "@/lib/ml-api";
 import { Progress } from "@/components/ui/progress";
-import { AlertTriangle, CheckCircle, ShieldAlert } from "lucide-react";
-import { motion } from "framer-motion";
+import { AlertTriangle, CheckCircle, ShieldAlert, Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface ResultCardProps {
   result: PredictionResult;
@@ -14,54 +14,60 @@ export default function ResultCard({ result, type }: ResultCardProps) {
   const label = type === "cataract" ? "Cataract" : "Anemia";
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35 }}
-      className="rounded-xl border bg-card p-6 space-y-5"
-    >
-      {/* Status */}
-      <div className="flex items-start gap-3">
+    <div className="rounded-lg border bg-card overflow-hidden">
+      {/* Status header */}
+      <div className={`px-4 py-3 flex items-center gap-2.5 ${
+        isNormal ? "bg-success/10 border-b border-success/20" : "bg-warning/10 border-b border-warning/20"
+      }`}>
         {isNormal ? (
-          <CheckCircle className="h-5 w-5 text-success mt-0.5 shrink-0" />
+          <CheckCircle className="h-5 w-5 text-success shrink-0" />
         ) : (
-          <ShieldAlert className="h-5 w-5 text-warning mt-0.5 shrink-0" />
+          <ShieldAlert className="h-5 w-5 text-warning shrink-0" />
         )}
-        <div>
-          <p className="font-display text-lg font-semibold text-foreground">
-            {isNormal ? "No signs detected" : `${label} detected`}
+        <div className="flex-1">
+          <p className="text-sm font-semibold text-foreground">
+            {isNormal ? "No Signs Detected" : `${label} Detected`}
           </p>
           {result.severity && (
-            <p className="text-sm text-muted-foreground capitalize mt-0.5">
-              Severity: {result.severity}
+            <p className="text-xs text-muted-foreground capitalize">
+              Severity Level: {result.severity}
             </p>
           )}
         </div>
       </div>
 
-      {/* Confidence */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">Confidence</span>
-          <span className="font-medium text-foreground tabular-nums">{confidencePercent}%</span>
+      <div className="p-4 space-y-4">
+        {/* Confidence */}
+        <div>
+          <div className="flex items-center justify-between text-sm mb-2">
+            <span className="text-muted-foreground">Confidence Score</span>
+            <span className="font-semibold text-foreground tabular-nums">{confidencePercent}%</span>
+          </div>
+          <Progress value={confidencePercent} className="h-2" />
         </div>
-        <Progress value={confidencePercent} className="h-1.5" />
-      </div>
 
-      {/* Description */}
-      <p className="text-sm text-muted-foreground leading-relaxed">
-        {result.description}
-      </p>
+        {/* Description */}
+        <div className="rounded-md bg-muted/50 p-3">
+          <p className="text-sm text-foreground leading-relaxed">{result.description}</p>
+        </div>
 
-      {/* Low confidence warning */}
-      {result.confidence < 0.6 && (
-        <div className="flex items-start gap-2 rounded-lg bg-warning/10 border border-warning/20 p-3">
-          <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5 text-warning" />
-          <p className="text-xs text-warning-foreground">
-            Low confidence — try retaking the image with better lighting and focus.
+        {/* Low confidence warning */}
+        {result.confidence < 0.6 && (
+          <div className="flex items-start gap-2 rounded-md bg-warning/10 border border-warning/20 p-3">
+            <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5 text-warning" />
+            <p className="text-xs text-warning-foreground">
+              Low confidence result. Please retake the image with better lighting and focus for more accurate results.
+            </p>
+          </div>
+        )}
+
+        {/* Action */}
+        <div className="pt-1">
+          <p className="text-[11px] text-muted-foreground">
+            This is a preliminary screening result. Please consult an ophthalmologist for a comprehensive eye examination.
           </p>
         </div>
-      )}
-    </motion.div>
+      </div>
+    </div>
   );
 }

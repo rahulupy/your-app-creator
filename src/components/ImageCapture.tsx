@@ -1,7 +1,6 @@
 import { useRef, useState, useCallback } from "react";
-import { Upload, X, RotateCcw } from "lucide-react";
+import { Upload, X, RotateCcw, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { AnimatePresence, motion } from "framer-motion";
 
 interface ImageCaptureProps {
   onImageCaptured: (file: File) => void;
@@ -12,6 +11,7 @@ interface ImageCaptureProps {
 export default function ImageCapture({ onImageCaptured, instructions, disabled }: ImageCaptureProps) {
   const [preview, setPreview] = useState<string | null>(null);
   const [capturedFile, setCapturedFile] = useState<File | null>(null);
+  const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = useCallback((file: File) => {
@@ -30,51 +30,53 @@ export default function ImageCapture({ onImageCaptured, instructions, disabled }
     setCapturedFile(null);
   };
 
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith("image/")) handleFile(file);
+  };
+
   return (
-    <div className="space-y-4">
-      <AnimatePresence mode="wait">
-        {preview ? (
-          <motion.div
-            key="preview"
-            initial={{ opacity: 0, scale: 0.97 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.97 }}
-            className="relative"
+    <div className="space-y-3">
+      {preview ? (
+        <div className="relative rounded-lg border bg-card overflow-hidden">
+          <img
+            src={preview}
+            alt="Eye photo"
+            className="w-full aspect-[4/3] object-cover"
+          />
+          <button
+            onClick={reset}
+            className="absolute top-2 right-2 h-7 w-7 rounded-full bg-foreground/60 text-background flex items-center justify-center hover:bg-foreground/80 transition-colors"
           >
-            <div className="overflow-hidden rounded-xl border bg-card">
-              <img
-                src={preview}
-                alt="Captured eye"
-                className="w-full aspect-[4/3] object-cover"
-              />
-            </div>
-            <button
-              onClick={reset}
-              className="absolute top-3 right-3 h-7 w-7 rounded-full bg-foreground/70 text-background flex items-center justify-center hover:bg-foreground/90 transition-colors"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          </motion.div>
-        ) : (
-          <motion.button
-            key="upload"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => fileInputRef.current?.click()}
-            disabled={disabled}
-            className="w-full rounded-xl border-2 border-dashed border-border hover:border-primary/40 bg-muted/30 hover:bg-accent/30 transition-colors py-16 flex flex-col items-center gap-3 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed group"
-          >
-            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/15 transition-colors">
-              <Upload className="h-4 w-4 text-primary" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-foreground">Upload image</p>
-              <p className="text-xs text-muted-foreground mt-0.5">{instructions}</p>
-            </div>
-          </motion.button>
-        )}
-      </AnimatePresence>
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      ) : (
+        <div
+          onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={handleDrop}
+          onClick={() => fileInputRef.current?.click()}
+          className={`rounded-lg border-2 border-dashed cursor-pointer transition-colors py-12 flex flex-col items-center gap-3 ${
+            dragOver
+              ? "border-primary bg-accent/50"
+              : "border-border bg-card hover:border-primary/40 hover:bg-accent/20"
+          } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+        >
+          <div className="h-12 w-12 rounded-full bg-accent flex items-center justify-center">
+            <Camera className="h-5 w-5 text-accent-foreground" />
+          </div>
+          <div className="text-center">
+            <p className="text-sm font-medium text-foreground">
+              Click to upload or drag & drop
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">{instructions}</p>
+          </div>
+          <p className="text-[10px] text-muted-foreground">PNG, JPG up to 10MB</p>
+        </div>
+      )}
 
       <input
         ref={fileInputRef}
@@ -85,13 +87,14 @@ export default function ImageCapture({ onImageCaptured, instructions, disabled }
       />
 
       {preview && (
-        <div className="flex gap-3">
-          <Button variant="outline" onClick={reset} className="flex-1 gap-2 rounded-full" disabled={disabled}>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={reset} size="sm" className="flex-1 gap-1.5" disabled={disabled}>
             <RotateCcw className="h-3.5 w-3.5" />
             Retake
           </Button>
-          <Button onClick={handleSubmit} className="flex-1 gap-2 rounded-full" disabled={disabled}>
-            Analyze
+          <Button onClick={handleSubmit} size="sm" className="flex-1 gap-1.5" disabled={disabled}>
+            <Upload className="h-3.5 w-3.5" />
+            Analyze Image
           </Button>
         </div>
       )}
