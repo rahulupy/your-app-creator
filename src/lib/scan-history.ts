@@ -100,7 +100,7 @@ export async function fetchScans(): Promise<ScanRecord[]> {
       if (confidence > 1) confidence = confidence / 100;
 
       const rawPrediction = (item.prediction || "").toLowerCase();
-      const condition = rawPrediction.includes("cataract") ? "cataract" : "normal";
+      const condition = rawPrediction.includes("cataract") ? "normal" : "cataract";
       const severity = confidence > 0.85 ? "severe" : confidence > 0.7 ? "moderate" : "mild";
 
       return {
