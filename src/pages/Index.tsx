@@ -42,7 +42,7 @@ export default function Index() {
               <span className="text-primary"> Diagnostics</span>
             </h1>
             <p className="text-lg text-muted-foreground max-w-lg mx-auto">
-              Screen for cataracts and anemia using your smartphone camera. Fast,
+              Screen for cataracts using your smartphone camera. Fast,
               non-invasive AI analysis powered by deep learning.
             </p>
           </motion.div>
