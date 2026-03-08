@@ -12,8 +12,17 @@ import { useNavigate } from "react-router-dom";
 export default function Profile() {
   const { username, logout } = useAuth();
   const navigate = useNavigate();
-  const scans = getScans();
-  const stats = getStats();
+  const [scans, setScans] = useState<ScanRecord[]>([]);
+  const [loadingScans, setLoadingScans] = useState(true);
+
+  useEffect(() => {
+    fetchScans().then((data) => {
+      setScans(data);
+      setLoadingScans(false);
+    });
+  }, []);
+
+  const stats = getStatsFromScans(scans);
 
   const handleLogout = () => {
     logout();
