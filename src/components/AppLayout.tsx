@@ -79,9 +79,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           <div className="grid gap-6 sm:grid-cols-3">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <div className="h-6 w-6 rounded bg-primary flex items-center justify-center">
-                  <Eye className="h-3 w-3 text-primary-foreground" />
-                </div>
+                <img src={mediscanLogo} alt="MediScan" className="h-6 w-6 object-contain" />
                 <span className="font-display text-sm font-bold text-foreground">MediScan</span>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
