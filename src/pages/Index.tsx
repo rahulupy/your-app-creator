@@ -42,7 +42,7 @@ export default function Index() {
               <span className="text-primary"> Diagnostics</span>
             </h1>
             <p className="text-lg text-muted-foreground max-w-lg mx-auto">
-              Screen for cataracts and anemia using your smartphone camera. Fast,
+              Screen for cataracts using your smartphone camera. Fast,
               non-invasive AI analysis powered by deep learning.
             </p>
           </motion.div>
@@ -51,7 +51,7 @@ export default function Index() {
 
       {/* Detection Cards */}
       <section className="container -mt-4 space-y-6">
-        <div className="grid gap-4 sm:grid-cols-2 max-w-2xl mx-auto">
+        <div className="grid gap-4 max-w-md mx-auto">
           {features.map((f, i) => (
             <motion.div
               key={f.path}
