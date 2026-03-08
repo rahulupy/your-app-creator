@@ -102,9 +102,9 @@ export async function detectCataract(
    // API returns percentage (e.g. 86.24), normalize to 0-1
    if (confidence > 1) confidence = confidence / 100;
    
-   // If confidence < 45%, flip the prediction and invert confidence
+   // If confidence < 45%, mark as cataract detected and invert confidence
    if (confidence < 0.45) {
-     condition = condition === "cataract" ? "normal" : "cataract";
+     condition = "cataract";
      confidence = 1 - confidence;
    }
    
