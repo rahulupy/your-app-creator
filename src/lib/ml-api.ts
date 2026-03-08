@@ -74,7 +74,7 @@ export async function detectCataract(
   const formData = new FormData();
   formData.append("image", imageFile);
 
-  const response = await fetch(`${ML_API_BASE_URL}/predict/cataract`, {
+  const response = await fetch(`${ML_API_BASE_URL}/predict`, {
     method: "POST",
     body: formData,
   });
@@ -84,9 +84,14 @@ export async function detectCataract(
   }
 
   const data = await response.json();
+  const condition = data.prediction === "cataract" ? "cataract" : "normal";
+  const confidence = typeof data.confidence === "number" ? data.confidence : parseFloat(data.confidence) || 0;
+  const severity = confidence > 0.85 ? "severe" : confidence > 0.7 ? "moderate" : "mild";
   return {
-    ...data,
-    description: getSeverityDescription(data.condition, data.confidence, data.severity),
+    condition: condition as PredictionResult["condition"],
+    confidence,
+    severity: condition === "cataract" ? (severity as PredictionResult["severity"]) : undefined,
+    description: getSeverityDescription(condition, confidence, condition === "cataract" ? severity : undefined),
   };
 }
 
