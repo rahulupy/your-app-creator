@@ -55,7 +55,12 @@ export default function CataractDetection() {
     setShowPatientForm(false);
     setLoading(true);
     try {
-      const prediction = await detectCataract(pendingFile);
+      const prediction = await detectCataract(pendingFile, {
+        name: patient.name,
+        age: patient.age,
+        gender: patient.gender,
+        eyeSide: patient.eyeSide,
+      });
       await saveScan(pendingFile.name, pendingFile, patient, prediction);
       setResult(prediction);
     } catch {
