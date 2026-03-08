@@ -72,15 +72,6 @@ export default function ImageCapture({ onImageCaptured, instructions, disabled }
               <Button
                 variant="outline"
                 className="gap-2"
-                onClick={() => cameraInputRef.current?.click()}
-                disabled={disabled}
-              >
-                <Camera className="h-4 w-4" />
-                Take Photo
-              </Button>
-              <Button
-                variant="outline"
-                className="gap-2"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={disabled}
               >
