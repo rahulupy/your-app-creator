@@ -1,5 +1,7 @@
 import { PredictionResult } from "@/lib/ml-api";
 
+const ML_API_BASE_URL = import.meta.env.VITE_ML_API_URL || "https://nontutorial-sharolyn-intersocial.ngrok-free.dev";
+
 export interface PatientDetails {
   name: string;
   age: number;
@@ -23,9 +25,17 @@ export interface UserProfile {
   joinedDate: string;
 }
 
-const SCANS_KEY = "mediscan_scans";
+/**
+ * Save scan to backend /history endpoint
+ */
+export async function saveScan(
+  imageName: string,
+  imageFile: File,
+  patient: PatientDetails,
+  prediction: PredictionResult
+): Promise<ScanRecord> {
+  const username = sessionStorage.getItem("mediscan_user") || "unknown";
 
-export function saveScan(imageName: string, imageFile: File, patient: PatientDetails, prediction: PredictionResult): ScanRecord {
   const record: ScanRecord = {
     id: crypto.randomUUID(),
     imageUrl: URL.createObjectURL(imageFile),
@@ -35,23 +45,105 @@ export function saveScan(imageName: string, imageFile: File, patient: PatientDet
     date: new Date().toISOString(),
   };
 
-  const existing = getScans();
-  existing.unshift(record);
-  const trimmed = existing.slice(0, 50);
-  sessionStorage.setItem(SCANS_KEY, JSON.stringify(trimmed.map(s => ({ ...s, imageUrl: "" }))));
-
-  if (!window.__mediscanScans) window.__mediscanScans = [];
-  window.__mediscanScans.unshift(record);
+  // Save to backend
+  try {
+    await fetch(`${ML_API_BASE_URL}/history`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
+      },
+      body: JSON.stringify({
+        username,
+        patient_name: patient.name,
+        patient_age: patient.age,
+        patient_gender: patient.gender,
+        eye_side: patient.eyeSide || null,
+        prediction: prediction.condition,
+        confidence: prediction.confidence,
+        severity: prediction.severity || null,
+        description: prediction.description,
+        image_name: imageName,
+        date: record.date,
+      }),
+    });
+  } catch (err) {
+    console.error("Failed to save scan to backend:", err);
+  }
 
   return record;
 }
 
-export function getScans(): ScanRecord[] {
-  return window.__mediscanScans || [];
+/**
+ * Fetch scan history from backend /history endpoint
+ */
+export async function fetchScans(): Promise<ScanRecord[]> {
+  const username = sessionStorage.getItem("mediscan_user") || "unknown";
+
+  try {
+    const response = await fetch(`${ML_API_BASE_URL}/history?username=${encodeURIComponent(username)}`, {
+      method: "GET",
+      headers: {
+        "ngrok-skip-browser-warning": "true",
+      },
+    });
+
+    if (!response.ok) {
+      console.error("Failed to fetch history:", response.status);
+      return [];
+    }
+
+    const data = await response.json();
+
+    // Map backend response to ScanRecord format
+    if (Array.isArray(data)) {
+      return data.map((item: any) => ({
+        id: item.id || crypto.randomUUID(),
+        imageUrl: "",
+        imageName: item.image_name || "",
+        patient: {
+          name: item.patient_name || "Unknown",
+          age: item.patient_age || 0,
+          gender: item.patient_gender || "other",
+          eyeSide: item.eye_side || undefined,
+        },
+        prediction: {
+          condition: item.prediction || "normal",
+          confidence: item.confidence || 0,
+          severity: item.severity || undefined,
+          description: item.description || "",
+        },
+        date: item.date || new Date().toISOString(),
+      }));
+    }
+
+    // If response has a nested array (e.g. { history: [...] })
+    const arr = data.history || data.scans || data.records || [];
+    return arr.map((item: any) => ({
+      id: item.id || crypto.randomUUID(),
+      imageUrl: "",
+      imageName: item.image_name || "",
+      patient: {
+        name: item.patient_name || "Unknown",
+        age: item.patient_age || 0,
+        gender: item.patient_gender || "other",
+        eyeSide: item.eye_side || undefined,
+      },
+      prediction: {
+        condition: item.prediction || "normal",
+        confidence: item.confidence || 0,
+        severity: item.severity || undefined,
+        description: item.description || "",
+      },
+      date: item.date || new Date().toISOString(),
+    }));
+  } catch (err) {
+    console.error("Failed to fetch scan history:", err);
+    return [];
+  }
 }
 
-export function getStats() {
-  const scans = getScans();
+export function getStatsFromScans(scans: ScanRecord[]) {
   const cataractCount = scans.filter(s => s.prediction.condition === "cataract").length;
   return {
     totalScans: scans.length,
@@ -59,10 +151,4 @@ export function getStats() {
     normalScans: scans.length - cataractCount,
     lastScanDate: scans.length > 0 ? scans[0].date : null,
   };
-}
-
-declare global {
-  interface Window {
-    __mediscanScans?: ScanRecord[];
-  }
 }
