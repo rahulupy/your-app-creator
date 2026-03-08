@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Eye, Heart, Activity, ArrowRight, Shield, Zap, Smartphone } from "lucide-react";
+import { Eye, Activity, ArrowRight, Shield, Zap, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
