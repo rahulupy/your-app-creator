@@ -66,7 +66,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
        </main>
 
       {/* Disclaimer */}
-      <footer className="border-t bg-card/50">
+      <footer className="border-t bg-card/50 mb-16 md:mb-0">
         <div className="container py-4">
           <div className="flex items-start gap-2 text-xs text-muted-foreground">
             <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5 text-warning" />
